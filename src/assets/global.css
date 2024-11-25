@@ -1,0 +1,30 @@
+/* src/assets/styles/global.scss */
+.button {
+    color: #ff8c00; /* Orange text */
+    background: transparent; /* Ingen bakgrund */
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.2s ease;
+    border: solid 1px black; /* Svart border */
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .button:hover {
+    transform: scale(1.05); /* Lätt förstoring vid hovring */
+    background: rgba(0, 0, 0, 0.1); /* Transparent svart bakgrund vid hovring */
+  }
+  
+  .button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Exkludera "Remove from Favorites" */
+  /*  .button-group .button:not(.remove-btn) {
+     all: unset;
+    @extend .button;  
+  }
+   */
