@@ -1,15 +1,7 @@
 
 <!-- src/components/Navbar-Recept.vue -->
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRecipes } from '@/composables/useRecipes';
 import logoImg from '@/assets/img/logo.png';
-
-
-
-
-const { favorites } = useRecipes();
-const favoritesCount = computed(() => favorites.value.length);
 </script>
 
 <template>
@@ -19,15 +11,15 @@ const favoritesCount = computed(() => favorites.value.length);
         <div class="nav-left">
           <a class="logo" href="#">
             <img class="logo-img" :src="logoImg" alt="Vue-Recept" />
-
             <span class="logo-text"></span>
           </a>
         </div>
         <div class="nav-links">
-
-          <router-link to="/" class="nav-link">Home</router-link>
+          <router-link to="/" class="nav-link">
+            Home
+          </router-link>
           <router-link to="/favorites" class="nav-link">
-            Favorites ({{ favoritesCount }})
+            Favorites
           </router-link>
         </div>
       </div>
@@ -123,7 +115,6 @@ body {
   background: rgba(0, 0, 0, 0.1); /* Transparent svart bakgrund */
 }
 </style>
-
 
 
 

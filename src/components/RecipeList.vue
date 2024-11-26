@@ -1,51 +1,98 @@
-<!-- src/components/RecipeList.vue -->
 
 
-<script setup lang='ts'>
-import { ref } from 'vue'
-import { type Recipe } from '../types'
 
-defineProps<{ recipes: Recipe[]
-  showRemove?: boolean
- }>()
+ <!-- src/components/RecipeList.vue -->
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { useRecipes } from '@/composables/useRecipes';
+import type { Recipe } from '@/types';
 
- defineEmits<{
-   (event: 'add-favorite', recipe: Recipe): void
-  (event: 'remove-favorite', id: number): void
- }>()
-
- const expanded = ref<number | null>(null)
-
-function toggleSummary(recipeId: number) {
-  expanded.value = expanded.value === recipeId ? null : recipeId
-}
-function truncateSummary(summary: string): string {
-  const stripped = summary.replace(/<\/?[^>]+(>|$)/g, "")
-  return stripped.length > 100 ? stripped.substr(0, 100) + "..." : stripped
+interface Props {
+  recipes: Recipe[];
+  showRemove?: boolean;
 }
 
+const props = defineProps<Props>();
 
+const { favorites, addToFavorites, removeFromFavorites, loadFavorites } = useRecipes();
+
+const displayedRecipes = ref<Recipe[]>([]);
+
+const expanded = ref<number | null>(null);
+const isMobile = ref(false);
+
+const toggleSummary = (recipeId: number): void => {
+  expanded.value = expanded.value === recipeId ? null : recipeId;
+};
+
+const truncateSummary = (summary: string): string => {
+  const stripped = summary.replace(/<\/?[^>]+(>|$)/g, "");
+  return stripped.length > 100 ? `${stripped.slice(0, 100)}...` : stripped;
+};
+
+const updateScreenSize = (): void => {
+  isMobile.value = window.innerWidth <= 768;
+};
+
+const isFavorite = (recipeId: number): boolean => {
+  return favorites.value.some((fav: Recipe) => fav.id === recipeId);
+};
+
+const handleAddToFavorites = (recipe: Recipe): void => {
+  addToFavorites(recipe);
+};
+
+const handleRemoveFromFavorites = (recipeId: number): void => {
+  removeFromFavorites(recipeId);
+  if (props.showRemove) {
+    displayedRecipes.value = displayedRecipes.value.filter(recipe => recipe.id !== recipeId);
+  }
+};
+
+watch(() => props.recipes, (newRecipes) => {
+  displayedRecipes.value = newRecipes;
+}, { immediate: true });
+
+onMounted(() => {
+  loadFavorites();
+  updateScreenSize();
+  window.addEventListener('resize', updateScreenSize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateScreenSize);
+});
 </script>
 
 <template>
-  <div class='recipe-list'>
-    <div v-for="recipe in recipes" :key="recipe.id" class="recipe-item">
+  <div class="recipe-list">
+    <div v-for="recipe in displayedRecipes" :key="recipe.id" class="recipe-item">
       <img :src="recipe.image" :alt="recipe.title" class="recipe-image" />
       <div class="recipe-details">
-        <h2>{{recipe.title}}</h2>
+        <h2>{{ recipe.title }}</h2>
         <p v-if="recipe.summary" v-html="expanded === recipe.id ? recipe.summary : truncateSummary(recipe.summary)"></p>
 
-        <!-- Wrapper för knapparna -->
         <div class="button-group">
-          <button @click="toggleSummary(recipe.id)" class="button">
-              {{expanded === recipe.id ? 'Show less' : 'Read more'}}
+          <button @click="toggleSummary(recipe.id)" class="button read-more-btn">
+            {{ expanded === recipe.id ? (isMobile ? 'Less' : 'Show less') : (isMobile ? 'More' : 'Read more') }}
           </button>
 
-          <button v-if="!showRemove" @click="$emit('add-favorite', recipe)" class="button">
-            Add to Favorites
+          <button
+            v-if="!props.showRemove"
+            @click="handleAddToFavorites(recipe)"
+            class="button favorite-btn"
+          >
+            <span v-if="!isMobile">Favorites</span>
+            <span v-else>⭐</span>
+            <span v-if="isFavorite(recipe.id)" class="favorite-icon">❤️</span>
           </button>
-          <button v-else @click="$emit('remove-favorite', recipe.id)" class="remove-btn">
-            Remove from Favorites
+
+          <button
+            v-else
+            @click="handleRemoveFromFavorites(recipe.id)"
+            class="button remove-btn"
+          >
+            Remove
           </button>
         </div>
       </div>
@@ -104,48 +151,16 @@ function truncateSummary(summary: string): string {
 }
 
 .button-group button {
-  flex: 0 0 auto; /* Gör så att knappar inte växer */
+  flex: 0 0 auto;
   padding: 10px 20px;
   border-radius: 5px;
   transition: background-color 0.3s ease, transform 0.2s ease;
   font-size: 1rem;
 }
 
-.favorite-btn {
-  background-color: #4caf50;
-  color: white;
+.favorite-icon {
+  margin-left: 8px;
+  font-size: 1.2rem;
+  color: #ff0000;
 }
-
-.favorite-btn:hover {
-  background-color: #45a049;
-}
-
-.remove-btn {
-  background-color: #f44336;
-  color: white;
-}
-
-.remove-btn:hover {
-  background-color: #d32f2f;
-}
-
-button:hover {
-  transform: translateY(-2px);
-}
-.read-more-btn {
-  background-color: #4caf50;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.read-more-btn:hover {
-  background-color: #45a049;
-  transform: translateY(-2px);
-}
-
 </style>
-
-
