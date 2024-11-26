@@ -25,15 +25,13 @@ onUnmounted(() => {
 
 <template>
   <div class="app-container">
-
     <!-- Visa bara Navbar om det inte är mobilvy -->
     <Navbar v-if="!isMobile" />
 
     <!-- Visa bara ResponsiveNavbar om det är mobilvy -->
     <ResponsiveNavbar v-else />
-    <router-view>
 
-    </router-view>
+    <router-view></router-view>
   </div>
 </template>
 

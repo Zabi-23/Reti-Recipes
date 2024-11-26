@@ -1,4 +1,28 @@
 
+       <!--  src/components/ResponsiveNavbar.vue -->
+
+       <script setup lang="ts">
+        import { ref, watch } from 'vue';
+        import { useRoute } from 'vue-router';
+        import logoImg from '@/assets/img/logo.png';
+
+        const route = useRoute();
+        const isMenuOpen = ref(false);
+
+        function toggleMenu() {
+          isMenuOpen.value = !isMenuOpen.value;
+        }
+
+        function closeMenu() {
+          isMenuOpen.value = false;
+        }
+
+        // Watch for route changes to close the menu
+        watch(() => route.path, () => {
+          closeMenu();
+        });
+        </script>
+
 
 <template>
   <nav class="navbar">
@@ -11,7 +35,7 @@
         </div>
 
         <!-- Hamburger Menu Toggle -->
-        <button class="hamburger" @click="toggleMenu">
+        <button class="hamburger" @click="toggleMenu" aria-label="Toggle menu">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -19,8 +43,8 @@
 
         <!-- Navigation Links -->
         <div :class="['nav-links', { open: isMenuOpen }]">
-          <router-link to="/" class="nav-link">Home</router-link>
-          <router-link to="/favorites" class="nav-link">
+          <router-link to="/" class="nav-link" @click="closeMenu">Home</router-link>
+          <router-link to="/favorites" class="nav-link" @click="closeMenu">
             Favorites
           </router-link>
         </div>
@@ -29,18 +53,8 @@
   </nav>
 </template>
 
-<script setup lang="ts">
-import { ref, } from 'vue';
-
-import logoImg from '@/assets/img/logo.png';
 
 
-const isMenuOpen = ref(false);
-
-function toggleMenu() {
-  isMenuOpen.value = !isMenuOpen.value;
-}
-</script>
 
 <style lang="scss" scoped>
 .navbar {

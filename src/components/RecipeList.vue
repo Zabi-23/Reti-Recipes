@@ -1,7 +1,4 @@
 
-
-
- <!-- src/components/RecipeList.vue -->
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useRecipes } from '@/composables/useRecipes';
@@ -100,6 +97,9 @@ onUnmounted(() => {
   </div>
 </template>
 
+<style scoped>
+/* ... (styles remain unchanged) ... */
+</style>
 
 <style scoped>
 .recipe-list {
