@@ -1,28 +1,35 @@
 
-       <!--  src/components/ResponsiveNavbar.vue -->
+<!-- src/components/ResponsiveNavbar.vue -->
 
-       <script setup lang="ts">
-        import { ref, watch } from 'vue';
-        import { useRoute } from 'vue-router';
-        import logoImg from '@/assets/img/logo.png';
+<script setup lang="ts">
+import { ref, watch, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import logoImg from '@/assets/img/logo.png';
 
-        const route = useRoute();
-        const isMenuOpen = ref(false);
+const route = useRoute();
+const router = useRouter();
+const isMenuOpen = ref(false);
 
-        function toggleMenu() {
-          isMenuOpen.value = !isMenuOpen.value;
-        }
+const isLoggedIn = computed(() => !!localStorage.getItem('authToken'));
 
-        function closeMenu() {
-          isMenuOpen.value = false;
-        }
+function toggleMenu() {
+  isMenuOpen.value = !isMenuOpen.value;
+}
 
-        // Watch for route changes to close the menu
-        watch(() => route.path, () => {
-          closeMenu();
-        });
-        </script>
+function closeMenu() {
+  isMenuOpen.value = false;
+}
 
+function logout() {
+  localStorage.removeItem('authToken');
+  router.push('/');
+  closeMenu();
+}
+
+watch(() => route.path, () => {
+  closeMenu();
+});
+</script>
 
 <template>
   <nav class="navbar">
@@ -34,49 +41,63 @@
           </a>
         </div>
 
-        <!-- Hamburger Menu Toggle -->
         <button class="hamburger" @click="toggleMenu" aria-label="Toggle menu">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
         </button>
 
-        <!-- Navigation Links -->
-        <div :class="['nav-links', { open: isMenuOpen }]">
+        <div :class="['nav-links', { 'open': isMenuOpen }]">
           <router-link to="/" class="nav-link" @click="closeMenu">Home</router-link>
           <router-link to="/favorites" class="nav-link" @click="closeMenu">
             Favorites
           </router-link>
+          <template v-if="!isLoggedIn">
+            <router-link to="/login" class="nav-link" @click="closeMenu">
+              Sign In
+            </router-link>
+            <router-link to="/signup" class="nav-link" @click="closeMenu">
+              Sign Up
+            </router-link>
+          </template>
+          <button v-else @click="logout" class="nav-link">
+            Logout
+          </button>
         </div>
       </div>
     </div>
   </nav>
 </template>
 
-
-
-
 <style lang="scss" scoped>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
+}
+
 .navbar {
   border-bottom: 1px solid #ff8c00;
   position: relative;
+  z-index: 1000;
 }
 
 .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
   max-width: 1120px;
   margin: 0 auto;
-  height: 80px;
+  padding: 0 16px;
 }
 
 .nav-content {
   display: flex;
   align-items: center;
-  width: 100%;
   justify-content: space-between;
+  height: 80px;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
 }
 
 .logo {
@@ -86,74 +107,76 @@
 }
 
 .logo-img {
-  height: 50px;
+  height: 60px;
   width: auto;
+  border-radius: 50%;
 }
 
-/* Hamburger Menu */
 .hamburger {
-  display: none;
+  display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  background: none;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  background: transparent;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 0;
+  z-index: 1010;
+  position: relative;
 }
 
 .hamburger-line {
-  width: 25px;
+  width: 30px;
   height: 3px;
   background: #ff8c00;
-  transition: transform 0.3s ease;
+  transition: all 0.3s linear;
 }
 
-/* Navigation Links */
 .nav-links {
+  position: fixed;
+  right: -100%;
+  top: 0;
+  height: auto;
   display: flex;
-  gap: 20px;
+  flex-direction: column;
+  background-color: white;
+  width: 300px;
+  max-width: 50%;
+  text-align: left;
+  padding: 80px 20px 20px;
+  transition: right 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  visibility: hidden;
+  z-index: 1005;
+}
+
+.nav-links.open {
+  right: 0;
+  visibility: visible;
 }
 
 .nav-link {
   color: #ff8c00;
   text-decoration: none;
-  padding: 8px 16px;
-  border: 1px solid black;
-  border-radius: 4px;
-  transition: background 0.3s ease, transform 0.2s ease;
+  padding: 12px 16px;
+  display: block;
   font-weight: bold;
+  transition: background 0.3s ease;
 }
 
 .nav-link:hover {
-  background: rgba(0, 0, 0, 0.1);
-  transform: scale(1.05);
+  background: rgba(255, 140, 0, 0.1);
 }
 
-.nav-links.open {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 80px;
-  left: 0;
-  width: 100%;
-  background: white;
-  border-top: 1px solid #ff8c00;
-  padding: 16px 0;
+.nav-link.router-link-active,
+.nav-link.router-link-exact-active {
+  background: rgba(255, 140, 0, 0.2);
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
-  .hamburger {
-    display: flex;
-  }
-
   .nav-links {
-    display: none;
-  }
-
-  .nav-links.open {
-    display: flex;
+    width: 100%;
   }
 }
 </style>

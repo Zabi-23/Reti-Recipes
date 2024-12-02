@@ -38,12 +38,13 @@ h1 {
   text-align: center;
   margin-bottom: 20px;
   font-size: 2.5rem;
-  font-family: 'Allura', cursive; 
+  font-family: 'Allura', cursive;
   background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   color: #333;
 }
 </style>
+
 
 

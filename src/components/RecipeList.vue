@@ -1,4 +1,4 @@
-
+<!-- //src/components/RecipeList.vue -->
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useRecipes } from '@/composables/useRecipes';
@@ -6,7 +6,7 @@ import type { Recipe } from '@/types';
 
 interface Props {
   recipes: Recipe[];
-  showRemove?: boolean;
+  showRemove?: boolean; // Indikerar om vi visar "Remove" (favoritlistan)
 }
 
 const props = defineProps<Props>();
@@ -17,10 +17,6 @@ const displayedRecipes = ref<Recipe[]>([]);
 
 const expanded = ref<number | null>(null);
 const isMobile = ref(false);
-
-const toggleSummary = (recipeId: number): void => {
-  expanded.value = expanded.value === recipeId ? null : recipeId;
-};
 
 const truncateSummary = (summary: string): string => {
   const stripped = summary.replace(/<\/?[^>]+(>|$)/g, "");
@@ -35,15 +31,17 @@ const isFavorite = (recipeId: number): boolean => {
   return favorites.value.some((fav: Recipe) => fav.id === recipeId);
 };
 
-const handleAddToFavorites = (recipe: Recipe): void => {
-  addToFavorites(recipe);
+const toggleFavorite = (recipe: Recipe): void => {
+  if (isFavorite(recipe.id)) {
+    removeFromFavorites(recipe.id);
+  } else {
+    addToFavorites(recipe);
+  }
 };
 
-const handleRemoveFromFavorites = (recipeId: number): void => {
+const handleRemove = (recipeId: number): void => {
   removeFromFavorites(recipeId);
-  if (props.showRemove) {
-    displayedRecipes.value = displayedRecipes.value.filter(recipe => recipe.id !== recipeId);
-  }
+  displayedRecipes.value = displayedRecipes.value.filter(recipe => recipe.id !== recipeId);
 };
 
 watch(() => props.recipes, (newRecipes) => {
@@ -70,24 +68,29 @@ onUnmounted(() => {
         <p v-if="recipe.summary" v-html="expanded === recipe.id ? recipe.summary : truncateSummary(recipe.summary)"></p>
 
         <div class="button-group">
-          <button @click="toggleSummary(recipe.id)" class="button read-more-btn">
-            {{ expanded === recipe.id ? (isMobile ? 'Less' : 'Show less') : (isMobile ? 'More' : 'Read more') }}
-          </button>
+          <router-link
+            :to="`/recipe/${recipe.id}`"
+            class="button"
+          >
+            {{ expanded === recipe.id ? 'Show less' : 'Read more' }}
+          </router-link>
 
+          <!-- Visa hjärtikonen endast om vi inte är på favoritlistan -->
           <button
             v-if="!props.showRemove"
-            @click="handleAddToFavorites(recipe)"
-            class="button favorite-btn"
+            @click="toggleFavorite(recipe)"
+            class="button"
           >
-            <span v-if="!isMobile">Favorites</span>
-            <span v-else>⭐</span>
-            <span v-if="isFavorite(recipe.id)" class="favorite-icon">❤️</span>
+            <span :class="{ 'favorite-active': isFavorite(recipe.id), 'favorite-inactive': !isFavorite(recipe.id) }">
+              ❤
+            </span>
           </button>
 
+          <!-- Visa endast "Remove"-knappen om vi är på favoritlistan -->
           <button
-            v-else
-            @click="handleRemoveFromFavorites(recipe.id)"
-            class="button remove-btn"
+            v-if="props.showRemove"
+            @click="handleRemove(recipe.id)"
+            class="button"
           >
             Remove
           </button>
@@ -97,9 +100,6 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style scoped>
-/* ... (styles remain unchanged) ... */
-</style>
 
 <style scoped>
 .recipe-list {
@@ -150,17 +150,43 @@ onUnmounted(() => {
   margin-top: 10px;
 }
 
-.button-group button {
-  flex: 0 0 auto;
-  padding: 10px 20px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  font-size: 1rem;
+.favorite-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
 }
 
-.favorite-icon {
-  margin-left: 8px;
-  font-size: 1.2rem;
-  color: #ff0000;
+.favorite-btn:hover {
+  transform: scale(1.2);
 }
+
+.favorite-active {
+  color: red;
+}
+
+.favorite-inactive {
+  color: gray;
+  transition: color 0.3s ease-in-out;
+}
+
+.remove-btn {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: transparent; /* Orange bakgrund */
+  color: #ff8c00; /* Vit text */
+  border: solid 0.5; /* Ingen gräns */
+  border-radius: 4px; /* Lätt rundade hörn */
+  font-size: 18px; /* Storlek på text */
+  cursor: pointer; /* Pekare vid hover */
+  transition: background-color 0.3s ease; /* Mjuk övergång */
+}
+
+.remove-btn:hover {
+  background-color: orange;
+  color: white;
+}
+
 </style>
+
