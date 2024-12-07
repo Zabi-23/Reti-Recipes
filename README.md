@@ -104,7 +104,7 @@ Följ dessa steg för att installera och köra applikationen:
 
 ## Mappstruktur
 
-```
+|-- server              # Fetch API_URL
 ├── src
 │   ├── assets          # Bilder och globala resurser
 │   ├── components      # Vue-komponenter
