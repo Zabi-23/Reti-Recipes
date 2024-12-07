@@ -8,57 +8,97 @@ Reti Recipes är en modern receptapplikation byggd med Vue.js och TypeScript. Pr
 - **Favorithantering**: Användare kan lägga till eller ta bort recept från sina favoriter. Favoriter sparas lokalt i webbläsarens Local Storage.
 - **Responsiv design**: Anpassad för både mobila enheter och desktop.
 - **Sökfunktion**: Möjlighet att söka efter recept baserat på nyckelord.
-- **Navigering**: Två sidor, "Home" och "Favorites", hanteras med Vue Router.
+- **Navigering**: Inkluderar flera sidor, "Home", "Favorites", "Login" och "Sign Up", som hanteras med Vue Router.
+- **Receptdetaljer**: Dynamiska routes för att visa detaljer om specifika recept.
+- **404-sida**: Anpassad sida för ogiltiga URL:er.
+- **Router guards**: Skyddar vissa sidor från obehörig åtkomst, exempelvis "Favorites".
+
+---
 
 ## Kravuppfyllnad
 
-### Krav för Godkänt
+### **Godkänt**
+Projektet uppfyller samtliga krav för godkänt:
 
-1. **Vue-applikation**: Projektet är byggt med Vue.js som ramverk.
-2. **TypeScript**: TypeScript används för typning i hela projektet.
-3. **Textinterpolering**: Används för att visa data, exempelvis `{{ recipe.title }}` i `RecipeList.vue`.
-4. **Villkorlig rendering**: Implementerat med `v-if`, till exempel för att visa eller dölja en receptsammanfattning.
-5. **Listrendering**: `v-for` används för att rendera receptlistor.
-6. **Händelser**: `v-on` och dess kortform används för att hantera användarinteraktioner, exempelvis `@click`.
-7. **Computed properties**: Beräknade egenskaper används, till exempel för att räkna antal sidor i pagineringen.
-8. **v-model**: Tvåvägsbindning används i `SearchForm.vue` för att binda inputfält till sökfrågan.
-9. **Vue Router**: Två sidor (Home och Favorites) hanteras med Vue Router.
-10. **Props**: Typade props används för att skicka data mellan komponenter, exempelvis receptlistor i `RecipeList.vue`.
-11. **Reactive state**: `ref()` används för att hantera reaktivt state, exempelvis i `useRecipes.ts`.
-12. **Lifecycle hooks**: `onMounted()` används för att initialisera data och lyssna på ändringar i viewport-storlek.
-13. **Webbanrop**: Fetch API används för att hämta receptdata från TheMealDB.
-14. **Använt AI**: AI användes för att generera, strukturera och optimera kod, samt för att skriva delar av denna README.md.
+1. **Vue-applikation**:  
+   Projektet är byggt med Vue.js.
 
-### Vidareutveckling för Väl Godkänt
+2. **TypeScript**:  
+   TypeScript används för typning i hela projektet.
 
-- **Felhantering och validering**:
-  - Grundläggande felhantering implementeras i `fetchRecipes` för att hantera API-fel och visa användarvänliga meddelanden.
-  - Validering av sökfrågor implementeras i `SearchForm.vue` för att säkerställa att inmatningen är minst två tecken lång.
-- **Vue-ekosystem**:
-  - Projektet kan vidareutvecklas med Pinia eller Vuex för att hantera global state.
-- **Robust design**:
-  - Responsiv och användarvänlig design med stöd för olika skärmstorlekar.
+3. **Textinterpolering**:  
+   Används för att visa data, exempelvis `{{ recipe.title }}` i `RecipeList.vue`.
+
+4. **Villkorlig rendering**:  
+   Implementerat med `v-if` för att visa eller dölja receptinformation.
+
+5. **Listrendering**:  
+   `v-for` används för att rendera listor med recept.
+
+6. **Händelser (v-on eller kortform)**:  
+   `@click` används för att hantera användarinteraktioner, exempelvis när recept läggs till i favoriter.
+
+7. **Computed properties**:  
+   Används för att beräkna data dynamiskt, exempelvis filtrering av receptlistor.
+
+8. **v-model**:  
+   Tvåvägsbindning används i `SearchForm.vue` för att hantera sökinput.
+
+9. **Två sidor med Vue Router**:  
+   Applikationen har minst två sidor: "Home" och "Favorites", samt fler.
+
+10. **Props (typsäkra)**:  
+    Props används i komponenter och är korrekt typade med TypeScript, exempelvis i `RecipeList.vue`.
+
+11. **Reactive state (ref())**:  
+    Reactive state hanteras med `ref()` i flera delar av applikationen, exempelvis inloggningsstatus.
+
+12. **Lifecycle hooks (mounted)**:  
+    `onMounted()` används för att hämta data från API:t vid sidladdning.
+
+13. **Webbanrop (fetch/axios)**:  
+    Axios används för att hämta receptdata från TheMealDB.
+
+14. **Använt AI**:  
+    AI har använts för att generera, strukturera och optimera delar av koden samt dokumentationen.
+
+### **Väl Godkänt**
+Projektet uppfyller följande krav för väl godkänt:
+
+1. **Felhantering och validering**:  
+   Grundläggande felhantering finns implementerad för API-samtal (exempelvis vid misslyckade fetch-svar), och sökinput valideras i `SearchForm.vue`.
+
+2. **Dynamisk route matching**:  
+   Route `/recipe/:id` visar detaljer för specifika recept.
+
+3. **Router guards**:  
+   Skydd för `favorites`-sidan via en `beforeEach` guard.
+
+4. **404-sida**:  
+   Anpassad sida som visas när ogiltiga URL:er besöks.
+
+---
 
 ## Teknologier och bibliotek
 
-- **Vue.js**: Ramverk för front-end.
-- **TypeScript**: Statiskt typat språk för att förbättra kodkvaliteten.
-- **Vue Router**: För navigering mellan olika sidor.
-- **Local Storage**: För att lagra användarens favoriter.
-- **Fetch API**: För att hämta data från TheMealDB API.
-- **Express**: Backend för att hantera serverdelen.
-- **Concurrently**: För att köra klient och server samtidigt.
+- **Vue.js**: Frontend-ramverket.
+- **TypeScript**: För att förbättra typkontroll och kodkvalitet.
+- **Vue Router**: För att hantera navigering mellan sidor och dynamiska routes.
+- **Axios**: För API-anrop.
+- **Express**: Backend-server.
+- **Concurrently**: För att köra server och klient samtidigt.
+- **Local Storage**: För att lagra användarnas favoriter.
+
+---
 
 ## Installation
-
-Följ dessa steg för att installera och köra applikationen:
 
 1. Klona projektet:
    ```bash
    git clone <repository-url>
    ```
 
-2. Navigera till projektmappen:
+2. Gå till projektmappen:
    ```bash
    cd <project-folder>
    ```
@@ -68,12 +108,14 @@ Följ dessa steg för att installera och köra applikationen:
    npm install
    ```
 
-4. Starta både klient och server samtidigt:
+4. Starta applikationen:
    ```bash
    npm run dev
    ```
 
 5. Öppna applikationen i din webbläsare på `http://localhost:3000`.
+
+---
 
 ## Mappstruktur
 
@@ -91,6 +133,8 @@ Följ dessa steg för att installera och köra applikationen:
 └── README.md           # Projektbeskrivning
 ```
 
+---
+
 ## Backend-server
 
 Servern är byggd med Express och innehåller följande funktioner:
@@ -101,15 +145,22 @@ Servern är byggd med Express och innehåller följande funktioner:
 
 Servern startas automatiskt när du kör `npm run dev`.
 
+---
+
 ## Möjliga förbättringar
 
 - Implementera bättre felhantering för API-samtal.
-- Använda Vuex eller Pinia för hantering av global state.
+- Implementera en global state-hantering om Pinia tillåts i framtiden.
 - Implementera fler tester för att säkerställa robustheten i koden.
+- Utöka designen för ännu bättre användarupplevelse.
 
-## Författare
+---
+
+## Författare(Zabi)
 
 Projektet är utvecklat som en del av kursen och är skapat för att förbättra förståelsen av Vue.js och TypeScript.
+
+
 
 
 
