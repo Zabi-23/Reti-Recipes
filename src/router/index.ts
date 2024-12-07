@@ -1,10 +1,11 @@
 // src/router/index.ts
+// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import FavoritesView from '@/views/FavoritesView.vue';
-import RecipeDetailsView from '@/views/REcipeDetailsView.vue'
-import NotFoundView from '../views/NotFoundView.vue';
+import RecipeDetailsView from '@/views/RecipeDetailsView.vue';
+import NotFoundView from '@/views/NotFoundView.vue';
 import LoginView from '@/views/LoginView.vue';
 import SignUpView from '@/views/SignUpView.vue';
 
@@ -54,15 +55,15 @@ const router = createRouter({
   },
 });
 
+// Router guard: skydda "favorites" om användaren inte är inloggad
 router.beforeEach((to, from, next) => {
   if (to.name === 'favorites' && !localStorage.getItem('authToken')) {
-    next({ name: 'login' });
+    next({ name: 'login' }); // Omdirigera till inloggningssidan
   } else {
-    next();
+    next(); // Tillåt navigering
   }
 });
 
 export default router;
-
 
 
